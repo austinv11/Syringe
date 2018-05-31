@@ -9,7 +9,7 @@ ext {
     // Project constants
     github_org = 'austinv11'
     project_name = 'Syringe'
-    artifact_group = 'com.austinv11.aspects'
+    artifact_group = 'com.austinv11.syringe'
     project_version = '1.0.0-SNAPSHOT'
     project_description = 'Abstractions for programmatically modifying Java classes.'
     project_jdk = '1.8'

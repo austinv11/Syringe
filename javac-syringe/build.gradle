@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':common')
+    compile project(":common")
 
     compileOnly files("${System.getProperty('java.home')}/../lib/tools.jar")  // JDK tools.jar for javac api
 }

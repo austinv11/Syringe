@@ -12,8 +12,8 @@
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
     <bytecodeTargetLevel>
-      <module name="Syringe_main" target="1.8" />
-      <module name="Syringe_test" target="1.8" />
+      <module name="javac_main" target="1.8" />
+      <module name="javac_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

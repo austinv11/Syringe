@@ -1,4 +1,6 @@
 rootProject.name = 'Syringe'
 include 'common'
-include 'javac'
+include 'javac-syringe'
+include 'asm-syringe'
+include 'proxy-syringe'
 
