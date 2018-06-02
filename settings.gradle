@@ -3,4 +3,5 @@ include 'common'
 include 'javac-syringe'
 include 'asm-syringe'
 include 'proxy-syringe'
+include 'cglib-syringe'
 
