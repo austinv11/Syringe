@@ -16,51 +16,92 @@
  */
 package com.austinv11.syringe.inject;
 
-import javax.annotation.Nullable;
-import java.util.Optional;
+import java.lang.reflect.Modifier;
 
 /**
  * A simple POJO containing some information about the injection site.
  *
  * @see com.austinv11.syringe.inject.InjectionSiteFilter
+ * @see com.austinv11.syringe.inject.sites
  */
-public class InjectionSite {
+public abstract class InjectionSite {
 
     private final InjectionTarget target;
 
-    private final String packageName;
-    private final String className;
+    private final AnnotationInfo[] annotationInfo;
 
-    private final @Nullable String fieldName; //TODO signatures
+    private final String name;
 
-    private final @Nullable String methodName; //TODO signatures
+    private final int modifiers;
 
-    public InjectionSite(InjectionTarget target, String packageName, String className, @Nullable String fieldName,
-                         @Nullable String methodName) {
+    public InjectionSite(InjectionTarget target, AnnotationInfo[] annotationInfo, String name, int modifiers) {
         this.target = target;
-        this.packageName = packageName;
-        this.className = className;
-        this.fieldName = fieldName;
-        this.methodName = methodName;
+        this.annotationInfo = annotationInfo;
+        this.name = name;
+        this.modifiers = modifiers;
     }
 
     public InjectionTarget getTarget() {
         return target;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public AnnotationInfo[] getAnnotationInfo() {
+        return annotationInfo;
     }
 
-    public String getClassName() {
-        return className;
+    public String getName() {
+        return name;
     }
 
-    public Optional<String> getFieldName() {
-        return Optional.ofNullable(fieldName);
+    public int getModifiers() {
+        return modifiers;
     }
 
-    public Optional<String> getMethodName() {
-        return Optional.ofNullable(methodName);
+    public boolean isPublic() {
+        return Modifier.isPublic(modifiers);
+    }
+
+    public boolean isPrivate() {
+        return Modifier.isPrivate(modifiers);
+    }
+
+    public boolean isProtected() {
+        return Modifier.isProtected(modifiers);
+    }
+
+    public boolean isStatic() {
+        return Modifier.isStatic(modifiers);
+    }
+
+    public boolean isFinal() {
+        return Modifier.isFinal(modifiers);
+    }
+
+    public boolean isSynchronized() {
+        return Modifier.isSynchronized(modifiers);
+    }
+
+    public boolean isVolatile() {
+        return Modifier.isVolatile(modifiers);
+    }
+
+    public boolean isTransient() {
+        return Modifier.isTransient(modifiers);
+    }
+
+    public boolean isNative() {
+        return Modifier.isNative(modifiers);
+    }
+
+    public boolean isInterface() {
+        return Modifier.isInterface(modifiers);
+    }
+
+    public boolean isAbstract() {
+        return Modifier.isAbstract(modifiers);
+    }
+
+    public boolean isStrict() {
+        return Modifier.isStrict(modifiers);
     }
 }
