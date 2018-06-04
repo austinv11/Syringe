@@ -21,16 +21,16 @@ import com.austinv11.syringe.Syringe;
 /**
  * This representation an action of injection.
  */
-public abstract class Injection {
+public class Injection<T extends InjectionSite> {
 
     private final Syringe syringe;
 
     private final InjectionTarget target;
     private final InjectionDelta delta;
 
-    private final InjectionSiteFilter filter;
+    private final InjectionSiteFilter<T> filter;
 
-    public Injection(Syringe syringe, InjectionTarget target, InjectionDelta delta, InjectionSiteFilter filter) {
+    public Injection(Syringe syringe, InjectionTarget target, InjectionDelta delta, InjectionSiteFilter<T> filter) {
         this.syringe = syringe;
         this.target = target;
         this.delta = delta;
@@ -49,7 +49,7 @@ public abstract class Injection {
         return delta;
     }
 
-    public InjectionSiteFilter getFilter() {
+    public InjectionSiteFilter<T> getFilter() {
         return filter;
     }
 }
