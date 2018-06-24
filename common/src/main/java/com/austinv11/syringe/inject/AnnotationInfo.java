@@ -36,8 +36,8 @@ public class AnnotationInfo {
             Annotation[] as = element.getAnnotations();
             for (int i = 0; i < as.length; i++) {
                 Annotation a = as[i];
-                Property[] properties = new Property[a.getClass().getDeclaredMethods().length];
-                Method[] declaredMethods = a.getClass().getDeclaredMethods();
+                Property[] properties = new Property[a.annotationType().getDeclaredMethods().length];
+                Method[] declaredMethods = a.annotationType().getDeclaredMethods();
                 for (int j = 0; j < declaredMethods.length; j++) {
                     Method m = declaredMethods[j];
                     m.setAccessible(true);
@@ -47,8 +47,8 @@ public class AnnotationInfo {
                         e.printStackTrace();
                         return null;
                     }
-                    array[i] = new AnnotationInfo(ClassSite.fromClass(a.getClass()).get(), properties);
                 }
+                array[i] = new AnnotationInfo(ClassSite.fromClass(a.annotationType()).get(), properties);
             }
             return array;
         });
@@ -65,5 +65,9 @@ public class AnnotationInfo {
 
     public Property[] getProperties() {
         return properties;
+    }
+
+    public Class<? extends Annotation> materialize() {
+        return (Class<? extends Annotation>) type.materialize();
     }
 }

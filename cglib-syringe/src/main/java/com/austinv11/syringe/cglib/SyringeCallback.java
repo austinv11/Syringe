@@ -74,7 +74,7 @@ public class SyringeCallback implements MethodInterceptor {
                 }
             }
         }
-        return proxy.invoke(obj, args);
+        return proxy.invokeSuper(obj, args);
     }
 
     @Nullable

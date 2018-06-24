@@ -38,6 +38,8 @@ public class ClassSite extends InjectionSite {
 
     private final Lazy<ClassSite> enclosingClass;
 
+    private final Lazy<Class<?>> materialized;
+
     public static Lazy<ClassSite> fromClass(Class<?> clazz) {
         return new Lazy<>(() -> {
             Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(clazz);
@@ -103,13 +105,14 @@ public class ClassSite extends InjectionSite {
 
             return new ClassSite(annotations, clazz.getCanonicalName(), clazz.getModifiers(),
                     PackageInfo.fromPackage(clazz.getPackage()), k, fields, methods, types, interfaces, superClass,
-                    enclosing);
+                    enclosing, new Lazy<>(clazz));
         });
     }
 
     public ClassSite(Lazy<AnnotationInfo[]> annotationInfo, String name, int modifiers, Lazy<PackageInfo>
             packageInfo, Kind kind, Lazy<FieldSite[]> fields, Lazy<MethodSite[]> methods, Lazy<TypeInfo[]> types,
-                     Lazy<TypeInfo[]> interfaces, Lazy<TypeInfo> superClass, Lazy<ClassSite> enclosingClass) {
+                     Lazy<TypeInfo[]> interfaces, Lazy<TypeInfo> superClass, Lazy<ClassSite> enclosingClass, Lazy
+                             <Class<?>> materialized) {
         super(InjectionTarget.CLASS, annotationInfo, name, modifiers);
         this.packageInfo = packageInfo;
         this.kind = kind;
@@ -119,6 +122,7 @@ public class ClassSite extends InjectionSite {
         this.interfaces = interfaces;
         this.superClass = superClass;
         this.enclosingClass = enclosingClass;
+        this.materialized = materialized;
     }
 
     public Lazy<PackageInfo> getPackage() {
@@ -151,6 +155,10 @@ public class ClassSite extends InjectionSite {
 
     public Lazy<ClassSite> getEnclosingClass() {
         return enclosingClass;
+    }
+
+    public Class<?> materialize() {
+        return materialized.get();
     }
 
     public enum Kind {

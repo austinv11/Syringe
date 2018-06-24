@@ -108,7 +108,7 @@ public class CompiledInjectionVisitor implements InjectionVisitor {
                                         Object[] args,
                                         MethodProxy proxy,
                                         Lazy<MethodSite> siteInfo) throws Throwable {
-            com.austinv11.syringe.proxy.MethodProxy sProxy = (a) -> proxy.invoke(obj, a);
+            com.austinv11.syringe.proxy.MethodProxy sProxy = (a) -> proxy.invokeSuper(obj, a);
             boolean wasInvoked = false;
             Object returnVal = null;
             try {
@@ -120,7 +120,7 @@ public class CompiledInjectionVisitor implements InjectionVisitor {
                         args = ((PreHookMethodInjection) injection).hookParams(obj, args, siteInfo);
                     } else if (injection instanceof PostHookMethodInjection) {
                         if (!wasInvoked) {
-                            returnVal = proxy.invoke(obj, args);
+                            returnVal = proxy.invokeSuper(obj, args);
                             wasInvoked = true;
                         }
                         returnVal = ((PostHookMethodInjection) injection).hookReturn(obj, args, returnVal, siteInfo);
@@ -138,7 +138,7 @@ public class CompiledInjectionVisitor implements InjectionVisitor {
                     }
                 }
                 if (!wasInvoked)
-                    return proxy.invoke(obj, args);
+                    return proxy.invokeSuper(obj, args);
                 else
                     return returnVal;
             } catch (@Nullable Throwable t) {
