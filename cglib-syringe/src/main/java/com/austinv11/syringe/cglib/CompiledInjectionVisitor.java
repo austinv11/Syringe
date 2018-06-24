@@ -84,8 +84,6 @@ public class CompiledInjectionVisitor implements InjectionVisitor {
             this.injections.sort((o1, o2) -> {
                 InjectionDelta d1 = o1.getDelta();
                 InjectionDelta d2 = o2.getDelta();
-                if (d1 == d2)
-                    return 0;
                 if (o1 instanceof PreHookMethodInjection)
                     return -1;
                 if (o2 instanceof PreHookMethodInjection)
