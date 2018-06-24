@@ -14,8 +14,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
+package com.austinv11.syringe.util;
 
-@NonNullPackage
-package com.austinv11.syringe.proxy;
+import com.austinv11.syringe.inject.sites.ClassSite;
 
-import com.austinv11.syringe.util.NonNullPackage;
+public class Property {
+
+    private final ClassSite type;
+    private final boolean initialized;
+    private final Object value;
+
+    public Property(ClassSite type, boolean initialized, Object value) {
+        this.type = type;
+        this.initialized = initialized;
+        this.value = value;
+    }
+
+    public ClassSite getType() {
+        return type;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+}

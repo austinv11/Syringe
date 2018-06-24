@@ -14,18 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe;
+package com.austinv11.syringe.proxy;
 
-import com.austinv11.syringe.util.IncompatibleConfigurationException;
-import com.austinv11.syringe.visitor.InjectionVisitor;
+import javax.annotation.Nullable;
 
-public interface SyringeService {
+public interface MethodProxy {
 
-    Syringe getSyringe();
-
-    void addVisitor(InjectionVisitor visitor);
-
-    <T> Class visit(Class<T> clazz) throws IncompatibleConfigurationException;
-
-    <T> T visit(T obj) throws IncompatibleConfigurationException;
+    @Nullable
+    Object call(Object[] args) throws Throwable;
 }

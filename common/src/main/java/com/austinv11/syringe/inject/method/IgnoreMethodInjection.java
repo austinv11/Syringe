@@ -14,21 +14,25 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.visitor;
 
+package com.austinv11.syringe.inject.method;
+
+import com.austinv11.syringe.inject.AnnotationInfo;
 import com.austinv11.syringe.inject.Injection;
-import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
+import com.austinv11.syringe.inject.InjectionDelta;
+import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.Lazy;
 
-import java.util.Optional;
+import javax.annotation.Nullable;
 
-public interface InjectionVisitor {
+public abstract class IgnoreMethodInjection extends Injection<MethodSite> {
 
-    Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site);
+    public IgnoreMethodInjection() {
+        super(InjectionTarget.METHOD, InjectionDelta.REMOVAL);
+    }
 
-    Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site);
-
-    Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site);
+    public abstract boolean shouldIgnore(@Nullable Object thisInstance,
+                                         Object[] params,
+                                         Lazy<MethodSite> methodInfo);
 }

@@ -16,35 +16,144 @@
  */
 package com.austinv11.syringe.inject.sites;
 
-import com.austinv11.syringe.inject.AnnotationInfo;
-import com.austinv11.syringe.inject.InjectionSite;
-import com.austinv11.syringe.inject.InjectionTarget;
+import com.austinv11.syringe.inject.*;
+import com.austinv11.syringe.util.Lazy;
+
+import java.lang.reflect.*;
 
 public class ClassSite extends InjectionSite {
 
-    private final String packageName;
+    private final Lazy<PackageInfo> packageInfo;
+    private final Kind kind;
 
-    private final FieldSite[] fields;
+    private final Lazy<FieldSite[]> fields;
 
-    private final MethodSite[] methods;
+    private final Lazy<MethodSite[]> methods;
 
-    public ClassSite(InjectionTarget target, AnnotationInfo[] annotationInfo, String name, int modifiers, String
-            packageName, FieldSite[] fields, MethodSite[] methods) {
-        super(target, annotationInfo, name, modifiers);
-        this.packageName = packageName;
+    private final Lazy<TypeInfo[]> types;
+
+    private final Lazy<TypeInfo[]> interfaces;
+
+    private final Lazy<TypeInfo> superClass;
+
+    private final Lazy<ClassSite> enclosingClass;
+
+    public static Lazy<ClassSite> fromClass(Class<?> clazz) {
+        return new Lazy<>(() -> {
+            Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(clazz);
+
+            Lazy<FieldSite[]> fields = new Lazy<>(() -> {
+                Field[] jFields = clazz.getFields();
+                FieldSite[] fs = new FieldSite[jFields.length];
+                for (int i = 0; i < jFields.length; i++) {
+                    fs[i] = FieldSite.fromField(jFields[i]).get();
+                }
+                return fs;
+            });
+
+            Lazy<MethodSite[]> methods = new Lazy<>(() -> {
+                Method[] jMethods = clazz.getMethods();
+                MethodSite[] ms = new MethodSite[jMethods.length];
+                for (int i = 0; i < jMethods.length; i++) {
+                    ms[i] = MethodSite.fromMethod(jMethods[i]).get();
+                }
+                return ms;
+            });
+
+            Lazy<TypeInfo[]> types = new Lazy<>(() -> {
+                TypeVariable[] jTypes = clazz.getTypeParameters();
+                TypeInfo[] ts = new TypeInfo[jTypes.length];
+                for (int i = 0; i < jTypes.length; i++) {
+                    ts[i] = TypeInfo.fromType(jTypes[i]).get();
+                }
+                return ts;
+            });
+
+            Lazy<TypeInfo[]> interfaces = new Lazy<>(() -> {
+                Type[] jInterfaces = clazz.getGenericInterfaces();
+                TypeInfo[] is = new TypeInfo[jInterfaces.length];
+                for (int i = 0; i < jInterfaces.length; i++) {
+                    is[i] = TypeInfo.fromType(jInterfaces[i]).get();
+                }
+                return is;
+            });
+
+            Lazy<TypeInfo> superClass = new Lazy<>(() -> {
+                Type jSuper = clazz.getGenericSuperclass();
+                return TypeInfo.fromType(jSuper).get();
+            });
+
+            Lazy<ClassSite> enclosing = new Lazy<>(() -> {
+                Class<?> jEnclosing = clazz.getEnclosingClass();
+                return ClassSite.fromClass(jEnclosing).get();
+            });
+
+            Kind k;
+            if (clazz.isAnnotation()) {
+                k = Kind.ANNOTATION;
+            } else if (clazz.isInterface()) {
+                k = Kind.INTERFACE;
+            } else if (clazz.isEnum()) {
+                k = Kind.ENUM;
+            } else if (Modifier.isAbstract(clazz.getModifiers())) {
+                k = Kind.ABSTRACT_CLASS;
+            } else {
+                k = Kind.CLASS;
+            }
+
+            return new ClassSite(annotations, clazz.getCanonicalName(), clazz.getModifiers(),
+                    PackageInfo.fromPackage(clazz.getPackage()), k, fields, methods, types, interfaces, superClass,
+                    enclosing);
+        });
+    }
+
+    public ClassSite(Lazy<AnnotationInfo[]> annotationInfo, String name, int modifiers, Lazy<PackageInfo>
+            packageInfo, Kind kind, Lazy<FieldSite[]> fields, Lazy<MethodSite[]> methods, Lazy<TypeInfo[]> types,
+                     Lazy<TypeInfo[]> interfaces, Lazy<TypeInfo> superClass, Lazy<ClassSite> enclosingClass) {
+        super(InjectionTarget.CLASS, annotationInfo, name, modifiers);
+        this.packageInfo = packageInfo;
+        this.kind = kind;
         this.fields = fields;
         this.methods = methods;
+        this.types = types;
+        this.interfaces = interfaces;
+        this.superClass = superClass;
+        this.enclosingClass = enclosingClass;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public Lazy<PackageInfo> getPackage() {
+        return packageInfo;
     }
 
-    public FieldSite[] getFields() {
+    public Lazy<FieldSite[]> getFields() {
         return fields;
     }
 
-    public MethodSite[] getMethods() {
+    public Lazy<MethodSite[]> getMethods() {
         return methods;
+    }
+
+    public Lazy<TypeInfo[]> getTypes() {
+        return types;
+    }
+
+    public Kind getKind() {
+        return kind;
+    }
+
+    public Lazy<TypeInfo[]> getInterfaces() {
+        return interfaces;
+    }
+
+    public Lazy<TypeInfo> getSuperClass() {
+        return superClass;
+    }
+
+    public Lazy<ClassSite> getEnclosingClass() {
+        return enclosingClass;
+    }
+
+    public enum Kind {
+        INTERFACE, CLASS, ENUM, ABSTRACT_CLASS, ANNOTATION
     }
 }

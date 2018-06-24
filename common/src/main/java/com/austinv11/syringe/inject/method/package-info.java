@@ -14,29 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.inject;
+@NonNullPackage
+package com.austinv11.syringe.inject.method;
 
-public class ParameterInfo {
-
-    private final AnnotationInfo paramAnnotation;
-    private final TypeInfo parameterType;
-    private final String parameterName;
-
-    public ParameterInfo(AnnotationInfo paramAnnotation, TypeInfo parameterType, String parameterName) {
-        this.paramAnnotation = paramAnnotation;
-        this.parameterType = parameterType;
-        this.parameterName = parameterName;
-    }
-
-    public AnnotationInfo getParameterAnnotation() {
-        return paramAnnotation;
-    }
-
-    public TypeInfo getParameterType() {
-        return parameterType;
-    }
-
-    public String getParameterName() {
-        return parameterName;
-    }
-}
+import com.austinv11.syringe.util.NonNullPackage;

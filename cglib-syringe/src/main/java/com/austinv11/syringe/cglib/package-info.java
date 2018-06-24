@@ -14,18 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe;
+@NonNullPackage
+package com.austinv11.syringe.cglib;
 
-import com.austinv11.syringe.util.IncompatibleConfigurationException;
-import com.austinv11.syringe.visitor.InjectionVisitor;
-
-public interface SyringeService {
-
-    Syringe getSyringe();
-
-    void addVisitor(InjectionVisitor visitor);
-
-    <T> Class visit(Class<T> clazz) throws IncompatibleConfigurationException;
-
-    <T> T visit(T obj) throws IncompatibleConfigurationException;
-}
+import com.austinv11.syringe.util.NonNullPackage;

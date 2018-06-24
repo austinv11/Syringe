@@ -14,16 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.inject;
+@NonNullPackage
+package com.austinv11.syringe.proxy;
 
-import java.util.function.Predicate;
-
-/**
- * Simple interface for defining whether an injection site should be injected at.
- *
- * @see com.austinv11.syringe.inject.InjectionSite
- */
-@FunctionalInterface
-public interface InjectionSiteFilter<T extends InjectionSite> extends Predicate<T> {
-
-}
+import com.austinv11.syringe.util.NonNullPackage;

@@ -20,5 +20,5 @@ package com.austinv11.syringe.inject;
  * This represents the effect of the injection on a target.
  */
 public enum InjectionDelta {
-    ADDITION, REMOVAL, MODIFICATION
+    ADDITION, REMOVAL, MODIFICATION, NONE
 }

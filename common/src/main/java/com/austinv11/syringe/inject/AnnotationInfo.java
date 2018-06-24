@@ -16,6 +16,54 @@
  */
 package com.austinv11.syringe.inject;
 
+import com.austinv11.syringe.inject.sites.ClassSite;
+import com.austinv11.syringe.util.Lazy;
+import com.austinv11.syringe.util.Property;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class AnnotationInfo {
-    //TODO
+
+    private final ClassSite type;
+    private final Property[] properties;
+
+    public static Lazy<AnnotationInfo[]> fromAnnotatedElement(AnnotatedElement element) {
+        return new Lazy<>(() -> {
+            AnnotationInfo[] array = new AnnotationInfo[element.getAnnotations().length];
+            Annotation[] as = element.getAnnotations();
+            for (int i = 0; i < as.length; i++) {
+                Annotation a = as[i];
+                Property[] properties = new Property[a.getClass().getDeclaredMethods().length];
+                Method[] declaredMethods = a.getClass().getDeclaredMethods();
+                for (int j = 0; j < declaredMethods.length; j++) {
+                    Method m = declaredMethods[j];
+                    m.setAccessible(true);
+                    try {
+                        properties[j] = new Property(ClassSite.fromClass(m.getReturnType()).get(), true, m.invoke(a));
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                    array[i] = new AnnotationInfo(ClassSite.fromClass(a.getClass()).get(), properties);
+                }
+            }
+            return array;
+        });
+    }
+
+    public AnnotationInfo(ClassSite type, Property[] properties) {
+        this.type = type;
+        this.properties = properties;
+    }
+
+    public ClassSite getType() {
+        return type;
+    }
+
+    public Property[] getProperties() {
+        return properties;
+    }
 }

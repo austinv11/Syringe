@@ -17,23 +17,62 @@
 package com.austinv11.syringe.inject.sites;
 
 import com.austinv11.syringe.inject.*;
+import com.austinv11.syringe.util.Lazy;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 
 public class MethodSite extends InjectionSite {
 
-    private final TypeInfo returnType;
+    private final Lazy<TypeInfo> returnType;
 
     private final int parameterCount;
-    private final ParameterInfo[] parameters;
+    private final Lazy<ParameterInfo[]> parameters;
 
-    public MethodSite(InjectionTarget target, AnnotationInfo[] annotationInfo, String name, int modifiers, TypeInfo
-            returnType, int parameterCount, ParameterInfo[] parameters) {
-        super(target, annotationInfo, name, modifiers);
+    private final Lazy<TypeInfo[]> exceptions;
+
+    public static Lazy<MethodSite> fromMethod(Method method) {
+        return new Lazy<>(() -> {
+            method.setAccessible(true);
+
+            Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(method);
+
+            Lazy<TypeInfo> returnType = TypeInfo.fromType(method.getGenericReturnType());
+
+            Lazy<ParameterInfo[]> params = new Lazy<>(() -> {
+                ParameterInfo[] infos = new ParameterInfo[method.getParameterCount()];
+                Parameter[] parameters = method.getParameters();
+                for (int i = 0; i < infos.length; i++) {
+                    infos[i] = ParameterInfo.fromParameter(parameters[i]).get();
+                }
+                return infos;
+            });
+
+            Lazy<TypeInfo[]> exceptions = new Lazy<>(() -> {
+                Type[] eTypes = method.getGenericExceptionTypes();
+                TypeInfo[] es = new TypeInfo[eTypes.length];
+                for (int i = 0; i < es.length; i++) {
+                    es[i] = TypeInfo.fromType(eTypes[i]).get();
+                }
+                return es;
+            });
+
+            return new MethodSite(annotations, method.getName(), method.getModifiers(), returnType,
+                    method.getParameterCount(), params, exceptions);
+        });
+    }
+
+    public MethodSite(Lazy<AnnotationInfo[]> annotationInfo, String name, int modifiers, Lazy<TypeInfo>
+            returnType, int parameterCount, Lazy<ParameterInfo[]> parameters, Lazy<TypeInfo[]> exceptions) {
+        super(InjectionTarget.METHOD, annotationInfo, name, modifiers);
         this.returnType = returnType;
         this.parameterCount = parameterCount;
         this.parameters = parameters;
+        this.exceptions = exceptions;
     }
 
-    public TypeInfo getReturnType() {
+    public Lazy<TypeInfo> getReturnType() {
         return returnType;
     }
 
@@ -41,7 +80,11 @@ public class MethodSite extends InjectionSite {
         return parameterCount;
     }
 
-    public ParameterInfo[] getParameters() {
+    public Lazy<ParameterInfo[]> getParameters() {
         return parameters;
+    }
+
+    public Lazy<TypeInfo[]> getExceptions() {
+        return exceptions;
     }
 }

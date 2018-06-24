@@ -16,14 +16,19 @@
  */
 package com.austinv11.syringe.util;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Array;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Represents a lazily-retrieved and stored value.
+ * Represents a lazily-retrieved and stored value. This tends to be used in scenarios where values must be computed in
+ * order to get a usable value, where the computations are expensive.
  */
 public final class Lazy<T> {
 
     private final Supplier<T> supplier;
+    @Nullable
     private volatile T obj = null;
     private volatile boolean isSet = false;
 
@@ -31,15 +36,29 @@ public final class Lazy<T> {
         this.supplier = supplier;
     }
 
-    public Lazy(T obj) {
+    public Lazy(@Nullable T obj) {
         this.supplier = () -> obj;
     }
 
+    @Nullable
     public T get() {
         if (!isSet) {
             obj = supplier.get();
             isSet = true;
         }
         return obj;
+    }
+
+    public Lazy<Optional<T>> optional() {
+        return new Lazy<>(() -> Optional.ofNullable(supplier.get()));
+    }
+
+    public Lazy<T> or(Lazy<T> other) {
+        return new Lazy<>(() -> {
+            T firstTry = other.get();
+            if (firstTry != null && (!firstTry.getClass().isArray() || Array.getLength(firstTry) > 0))
+                return firstTry;
+            return other.get();
+        });
     }
 }

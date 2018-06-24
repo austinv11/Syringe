@@ -44,7 +44,7 @@ public final class Syringe implements Serializable {
      * @return True if modified, false if otherwise.
      */
     public static boolean wasModified(Object o) {
-        return wasVisited(o) && ((SyringeVisited) o).isModified();
+        return wasVisited(o) && ((SyringeVisited) o).didSyringeModify();
     }
 
     /**
@@ -143,6 +143,6 @@ public final class Syringe implements Serializable {
          *
          * @return True if the syringe actually made changes.
          */
-        boolean isModified();
+        boolean didSyringeModify(); //Weird name to prevent potential conflict
     }
 }
