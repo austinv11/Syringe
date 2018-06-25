@@ -32,9 +32,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Optional;
 
+import static org.junit.Assert.*;
+
 public class CglibTest {
 
-    public static void main(String[] args) {
+    @org.junit.Test
+    public void test() {
         CglibSyringe syringe = new CglibSyringe();
 
         syringe.addVisitor(new InjectionVisitor() {
@@ -175,39 +178,26 @@ public class CglibTest {
         Test t = new Test();
         Test proxied = syringe.visit(t);
 
-        if (!t.notAnnotated().equals("Not annotated!"))
-            throw new AssertionError();
-        if (!t.annotated().equals("Annotated!"))
-            throw new AssertionError();
+        assertEquals("Not annotated!", t.notAnnotated());
+        assertEquals("Annotated!", t.annotated());
         try {
             t.throwsException();
             throw new AssertionError();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException ignored) {}
+        assertEquals(1, t.interception(1));
+        assertTrue(t.returnsTrue());
+        assertNotNull(t.returnsNotNull());
 
-        }
-        if (t.interception(1) != 1)
-            throw new AssertionError();
-        if (!t.returnsTrue())
-            throw new AssertionError();
-        if (t.returnsNotNull() == null)
-            throw new AssertionError();
-
-        if (!proxied.notAnnotated().equals("Not annotated!"))
-            throw new AssertionError();
-        if (!proxied.annotated().equals("Changed!"))
-            throw new AssertionError();
+        assertEquals("Not annotated!", proxied.notAnnotated());
+        assertEquals("Changed!", proxied.annotated());
         try {
-            if (!proxied.throwsException().equals("Nope!"))
-                throw new AssertionError();
+            assertEquals("Nope!", proxied.throwsException());
         } catch (RuntimeException e) {
             throw new AssertionError();
         }
-        if (proxied.interception(1) != 2)
-            throw new AssertionError();
-        if (proxied.returnsTrue())
-            throw new AssertionError();
-        if (proxied.returnsNotNull() != null)
-            throw new AssertionError();
+        assertEquals(2, proxied.interception(1));
+        assertFalse(proxied.returnsTrue());
+        assertNull(proxied.returnsNotNull());
     }
 
     public static class Test {

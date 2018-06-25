@@ -2,4 +2,6 @@ dependencies {
     compile project(":common")
     compile 'org.ow2.asm:asm:6.2'
     compile 'org.ow2.asm:asm-util:6.2'
+
+    testCompile "junit:junit:$junit_version"
 }
