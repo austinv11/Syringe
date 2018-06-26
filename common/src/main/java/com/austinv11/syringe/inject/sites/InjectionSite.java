@@ -48,13 +48,13 @@ public abstract class InjectionSite {
 
     private final InjectionTarget target;
 
-    private final Lazy<AnnotationInfo[]> annotationInfo;
+    private final Lazy<AnnotationInfo>[] annotationInfo;
 
     private final String name;
 
     private final int modifiers;
 
-    public InjectionSite(InjectionTarget target, Lazy<AnnotationInfo[]> annotationInfo, String name, int modifiers) {
+    public InjectionSite(InjectionTarget target, Lazy<AnnotationInfo>[] annotationInfo, String name, int modifiers) {
         this.target = target;
         this.annotationInfo = annotationInfo;
         this.name = name;
@@ -65,7 +65,7 @@ public abstract class InjectionSite {
         return target;
     }
 
-    public Lazy<AnnotationInfo[]> getAnnotationInfo() {
+    public Lazy<AnnotationInfo>[] getAnnotationInfo() {
         return annotationInfo;
     }
 

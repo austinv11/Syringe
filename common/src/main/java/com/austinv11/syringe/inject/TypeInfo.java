@@ -27,8 +27,8 @@ public class TypeInfo {
 
     private final boolean generic;
     private final Direction genericDirection;
-    private final Lazy<Optional<TypeInfo[]>> genericBounds;
-    private final Lazy<AnnotationInfo[]> genericAnnotations;
+    private final Lazy<Optional<TypeInfo>>[] genericBounds;
+    private final Lazy<AnnotationInfo>[] genericAnnotations;
 
     private final Lazy<Optional<ClassSite>> value;
 
@@ -40,10 +40,10 @@ public class TypeInfo {
     }
 
     public static Lazy<TypeInfo> fromType(@Nullable Type type) {
-        return fromType(type, new Lazy<>(() -> new AnnotationInfo[0]));
+        return fromType(type, new Lazy[0]);
     }
 
-    private static Lazy<TypeInfo> fromType(@Nullable Type type, Lazy<AnnotationInfo[]> hint) {
+    private static Lazy<TypeInfo> fromType(@Nullable Type type, Lazy<AnnotationInfo>[] hint) {
         return new Lazy<>(() -> {
             if (type == null)
                 return null;
@@ -51,7 +51,7 @@ public class TypeInfo {
             if (type instanceof Class<?>) { //Non-generic
                 Class<?> clazz = (Class<?>) type;
                 return new TypeInfo(false, Direction.NONE,
-                        new Lazy<>(() -> Optional.of(new TypeInfo[]{TypeInfo.fromType(Object.class).get()})),
+                        new Lazy[]{TypeInfo.fromType(Object.class).optional()},
                         hint, ClassSite.fromClass(clazz).optional());
             } else if (type instanceof ParameterizedType) {
                 ParameterizedType ptype = (ParameterizedType) type;
@@ -62,43 +62,36 @@ public class TypeInfo {
                 return fromType(ptype.getRawType(), hint).get();
             } else if (type instanceof TypeVariable) {
                 TypeVariable tvar = (TypeVariable) type;
-                Lazy<Optional<TypeInfo[]>> bounds = new Lazy<>(() -> {
-                    AnnotatedType[] annotatedTypes = tvar.getAnnotatedBounds();
-                    TypeInfo[] bs = new TypeInfo[annotatedTypes.length];
-                    for (int i = 0; i < annotatedTypes.length; i++) {
-                        bs[i] = TypeInfo.fromType(annotatedTypes[i]).get();
-                    }
-                    return Optional.of(bs);
-                });
-                Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(tvar).or(hint);
+                AnnotatedType[] annotatedTypes = tvar.getAnnotatedBounds();
+                Lazy<Optional<TypeInfo>>[] bounds = new Lazy[annotatedTypes.length];
+                for (int i = 0; i < annotatedTypes.length; i++) {
+                    bounds[i] =TypeInfo.fromType(annotatedTypes[i]).optional();
+                }
+                Lazy<AnnotationInfo>[] annotations = AnnotationInfo.fromAnnotatedElement(tvar);
+                for (int i = 0; i < annotations.length; i++)
+                    annotations[i] = annotations[i].or(hint[i]);
                 return new TypeInfo(true, Direction.EXTENDS, bounds, annotations, new Lazy<>(Optional::empty));
             } else if (type instanceof WildcardType) {
                 WildcardType wtype = (WildcardType) type;
                 if (wtype.getUpperBounds().length == 1 && wtype.getLowerBounds().length == 0) { //Bounds are ?, no explicit bounds or ? extends Object
                     return new TypeInfo(true, Direction.WILDCARD,
-                            new Lazy<>(() -> new TypeInfo[]{TypeInfo.fromType(Object.class).get()}).optional(),
+                            new Lazy[]{TypeInfo.fromType(Object.class).optional()},
                             hint, new Lazy<>(Optional::empty));
                 } else if (wtype.getLowerBounds().length > 0) { //Super
-                    Lazy<TypeInfo[]> bounds = new Lazy<>(() -> {
-                        Type[] jBounds = wtype.getLowerBounds();
-                        TypeInfo[] ts = new TypeInfo[jBounds.length];
-                        for (int i = 0; i < ts.length; i++) {
-                            ts[i] = TypeInfo.fromType(jBounds[i]).get();
-                        }
-                        return ts;
-                    });
-                    return new TypeInfo(true, Direction.SUPER, bounds.optional(),
+                    Type[] jBounds = wtype.getLowerBounds();
+                    Lazy<Optional<TypeInfo>>[] ts = new Lazy[jBounds.length];
+                    for (int i = 0; i < ts.length; i++) {
+                        ts[i] = TypeInfo.fromType(jBounds[i]).optional();
+                    }
+                    return new TypeInfo(true, Direction.SUPER, ts,
                             hint, new Lazy<>(Optional::empty));
                 } else {
-                    Lazy<TypeInfo[]> bounds = new Lazy<>(() -> {
-                        Type[] jBounds = wtype.getUpperBounds();
-                        TypeInfo[] ts = new TypeInfo[jBounds.length];
-                        for (int i = 0; i < ts.length; i++) {
-                            ts[i] = TypeInfo.fromType(jBounds[i]).get();
-                        }
-                        return ts;
-                    });
-                    return new TypeInfo(true, Direction.EXTENDS, bounds.optional(),
+                    Type[] jBounds = wtype.getUpperBounds();
+                    Lazy<Optional<TypeInfo>>[] ts = new Lazy[jBounds.length];
+                    for (int i = 0; i < ts.length; i++) {
+                        ts[i] = TypeInfo.fromType(jBounds[i]).optional();
+                    }
+                    return new TypeInfo(true, Direction.EXTENDS, ts,
                             hint, new Lazy<>(Optional::empty));
                 }
             } else if (type instanceof GenericArrayType) {
@@ -111,8 +104,8 @@ public class TypeInfo {
     }
 
 
-    public TypeInfo(boolean generic, Direction genericDirection, Lazy<Optional<TypeInfo[]>> genericBounds,
-                    Lazy<AnnotationInfo[]> genericAnnotations, Lazy<Optional<ClassSite>> value) {
+    public TypeInfo(boolean generic, Direction genericDirection, Lazy<Optional<TypeInfo>>[] genericBounds,
+                    Lazy<AnnotationInfo>[] genericAnnotations, Lazy<Optional<ClassSite>> value) {
         this.generic = generic;
         this.genericDirection = genericDirection;
         this.genericBounds = genericBounds;
@@ -128,7 +121,7 @@ public class TypeInfo {
         return genericDirection;
     }
 
-    public Lazy<Optional<TypeInfo[]>> getGenericBounds() {
+    public Lazy<Optional<TypeInfo>>[] getGenericBounds() {
         return genericBounds;
     }
 
@@ -136,7 +129,7 @@ public class TypeInfo {
         return value;
     }
 
-    public Lazy<AnnotationInfo[]> getGenericAnnotations() {
+    public Lazy<AnnotationInfo>[] getGenericAnnotations() {
         return genericAnnotations;
     }
 

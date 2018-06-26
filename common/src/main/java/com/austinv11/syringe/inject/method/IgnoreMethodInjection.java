@@ -17,7 +17,6 @@
 
 package com.austinv11.syringe.inject.method;
 
-import com.austinv11.syringe.inject.AnnotationInfo;
 import com.austinv11.syringe.inject.Injection;
 import com.austinv11.syringe.inject.InjectionDelta;
 import com.austinv11.syringe.inject.InjectionTarget;

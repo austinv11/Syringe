@@ -38,22 +38,22 @@ import com.austinv11.syringe.util.Lazy;
 
 public class PackageInfo {
 
-    private final Lazy<AnnotationInfo[]> annotations;
+    private final Lazy<AnnotationInfo>[] annotations;
     private final String name;
 
     public static Lazy<PackageInfo> fromPackage(Package p) {
         return new Lazy<>(() -> {
-            Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(p);
+            Lazy<AnnotationInfo>[] annotations = AnnotationInfo.fromAnnotatedElement(p);
             return new PackageInfo(annotations, p.getName());
         });
     }
 
-    public PackageInfo(Lazy<AnnotationInfo[]> annotations, String name) {
+    public PackageInfo(Lazy<AnnotationInfo>[] annotations, String name) {
         this.annotations = annotations;
         this.name = name;
     }
 
-    public Lazy<AnnotationInfo[]> getAnnotations() {
+    public Lazy<AnnotationInfo>[] getAnnotations() {
         return annotations;
     }
 

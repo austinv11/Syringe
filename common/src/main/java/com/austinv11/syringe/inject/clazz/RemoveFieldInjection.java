@@ -14,17 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.visitor;
+
+package com.austinv11.syringe.inject.clazz;
 
 import com.austinv11.syringe.inject.Injection;
+import com.austinv11.syringe.inject.InjectionDelta;
+import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
-import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.Lazy;
 
-import java.util.Optional;
+public abstract class RemoveFieldInjection extends Injection<ClassSite> {
 
-public interface InjectionVisitor {
+    public RemoveFieldInjection() {
+        super(InjectionTarget.CLASS, InjectionDelta.REMOVAL);
+    }
 
-    Injection<?>[] visit(Lazy<ClassSite> site);
+    public abstract String[] removeFields(Lazy<ClassSite> clazz);
 }

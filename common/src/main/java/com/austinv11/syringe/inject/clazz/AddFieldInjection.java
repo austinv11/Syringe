@@ -14,17 +14,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.visitor;
 
+package com.austinv11.syringe.inject.clazz;
+
+import com.austinv11.syringe.direct.TypeSignature;
 import com.austinv11.syringe.inject.Injection;
+import com.austinv11.syringe.inject.InjectionDelta;
+import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
-import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.Lazy;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
-public interface InjectionVisitor {
+public abstract class AddFieldInjection extends Injection<ClassSite> {
 
-    Injection<?>[] visit(Lazy<ClassSite> site);
+    public AddFieldInjection() {
+        super(InjectionTarget.CLASS, InjectionDelta.ADDITION);
+    }
+
+    public abstract Optional<FieldDeclaration> defineField(Lazy<ClassSite> clazz);
+
+    public interface FieldDeclaration {
+
+        int modifiers();
+
+        String name();
+
+        TypeSignature type();
+
+        @Nullable
+        Object callback(@Nullable Object instance);
+    }
 }

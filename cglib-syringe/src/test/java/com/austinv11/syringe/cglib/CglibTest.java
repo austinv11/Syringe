@@ -17,15 +17,12 @@
 package com.austinv11.syringe.cglib;
 
 import com.austinv11.syringe.inject.AnnotationInfo;
-import com.austinv11.syringe.inject.Injection;
 import com.austinv11.syringe.inject.TypeInfo;
 import com.austinv11.syringe.inject.method.*;
-import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
 import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.proxy.MethodProxy;
 import com.austinv11.syringe.util.Lazy;
-import com.austinv11.syringe.visitor.InjectionVisitor;
+import com.austinv11.syringe.visitor.MethodInjectionVisitor;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Retention;
@@ -40,140 +37,65 @@ public class CglibTest {
     public void test() {
         CglibSyringe syringe = new CglibSyringe();
 
-        syringe.addVisitor(new InjectionVisitor() {
+        syringe.addVisitor((MethodInjectionVisitor) site -> Optional.of(new ReplaceMethodInjection() {
+            @Nullable
             @Override
-            public Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site) {
-                return Optional.of(new ReplaceMethodInjection() {
-                    @Nullable
-                    @Override
-                    public Object apply(@Nullable Object thisInstance, Object[] params, MethodProxy original,
-                                        Lazy<MethodSite> siteInfo) throws Throwable {
-                        AnnotationInfo[] annotations = site.get().getAnnotationInfo().get();
-                        for (AnnotationInfo i : annotations) {
-                            if (i.materialize().equals(TestAnnotation.class)) {
-                                return "Changed!";
-                            }
-                        }
-                        return original.call(params);
+            public Object apply(@Nullable Object thisInstance, Object[] params, MethodProxy original,
+                                Lazy<MethodSite> siteInfo) throws Throwable {
+                Lazy<AnnotationInfo>[] annotations = site.get().getAnnotationInfo();
+                for (Lazy<AnnotationInfo> i : annotations) {
+                    if (i.get().materialize().equals(TestAnnotation.class)) {
+                        return "Changed!";
                     }
-                });
+                }
+                return original.call(params);
             }
-        });
+        }));
 
-        syringe.addVisitor(new InjectionVisitor() {
+        syringe.addVisitor((MethodInjectionVisitor) site -> Optional.of(new ErrorRecoveryMethodInjection() {
             @Override
-            public Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-                return Optional.empty();
+            public Object tryRecovery(@Nullable Object thisInstance, Object[] params, Throwable error,
+                                      MethodProxy proxy, Lazy<MethodSite> methodInfo) throws Throwable {
+                return "Nope!";
             }
+        }));
 
+        syringe.addVisitor((MethodInjectionVisitor) site -> Optional.of(new PreHookMethodInjection() {
             @Override
-            public Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-                return Optional.empty();
+            public Object[] hookParams(@Nullable Object thisInstance, Object[] params, Lazy<MethodSite> methodInfo) throws Throwable {
+                if (params.length == 1 && params[0] instanceof Integer) {
+                    return new Object[]{(Integer) params[0] + 1};
+                }
+                return params;
             }
+        }));
 
+        syringe.addVisitor((MethodInjectionVisitor) site -> Optional.of(new PostHookMethodInjection() {
+            @Nullable
             @Override
-            public Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site) {
-                return Optional.of(new ErrorRecoveryMethodInjection() {
-                    @Override
-                    public Object tryRecovery(@Nullable Object thisInstance, Object[] params, Throwable error,
-                                              MethodProxy proxy, Lazy<MethodSite> methodInfo) throws Throwable {
-                        return "Nope!";
+            public Object hookReturn(@Nullable Object thisInstance, Object[] params, @Nullable Object
+                    originalReturn, Lazy<MethodSite> methodInfo) throws Throwable {
+                if (originalReturn instanceof Boolean)
+                    return !(Boolean) originalReturn;
+
+                return originalReturn;
+            }
+        }));
+
+        syringe.addVisitor((MethodInjectionVisitor) site -> Optional.of(new IgnoreMethodInjection() {
+            @Override
+            public boolean shouldIgnore(@Nullable Object thisInstance, Object[] params, Lazy<MethodSite>
+                    methodInfo) {
+                TypeInfo returnType = methodInfo.get().getReturnType().get();
+                if (returnType.getValue().get().isPresent()) {
+                    Class<?> materialized = returnType.getValue().get().get().materialize();
+                    if (materialized.equals(Object.class)) {
+                        return true;
                     }
-                });
+                }
+                return false;
             }
-        });
-
-        syringe.addVisitor(new InjectionVisitor() {
-            @Override
-            public Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site) {
-                return Optional.of(new PreHookMethodInjection() {
-                    @Override
-                    public Object[] hookParams(@Nullable Object thisInstance, Object[] params, Lazy<MethodSite> methodInfo) throws Throwable {
-                        if (params.length == 1 && params[0] instanceof Integer) {
-                            return new Object[]{(Integer) params[0] + 1};
-                        }
-                        return params;
-                    }
-                });
-            }
-        });
-
-        syringe.addVisitor(new InjectionVisitor() {
-            @Override
-            public Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site) {
-                return Optional.of(new PostHookMethodInjection() {
-                    @Nullable
-                    @Override
-                    public Object hookReturn(@Nullable Object thisInstance, Object[] params, @Nullable Object
-                            originalReturn, Lazy<MethodSite> methodInfo) throws Throwable {
-                        if (originalReturn instanceof Boolean)
-                            return !(Boolean) originalReturn;
-
-                        return originalReturn;
-                    }
-                });
-            }
-        });
-
-        syringe.addVisitor(new InjectionVisitor() {
-            @Override
-            public Optional<? extends Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-                return Optional.empty();
-            }
-
-            @Override
-            public Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site) {
-                return Optional.of(new IgnoreMethodInjection() {
-                    @Override
-                    public boolean shouldIgnore(@Nullable Object thisInstance, Object[] params, Lazy<MethodSite>
-                            methodInfo) {
-                        TypeInfo returnType = methodInfo.get().getReturnType().get();
-                        if (returnType.getValue().get().isPresent()) {
-                            Class<?> materialized = returnType.getValue().get().get().materialize();
-                            if (materialized.equals(Object.class)) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                });
-            }
-        });
+        }));
 
         Test t = new Test();
         Test proxied = syringe.visit(t);

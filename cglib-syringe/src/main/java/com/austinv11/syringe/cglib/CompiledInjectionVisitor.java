@@ -20,12 +20,10 @@ import com.austinv11.syringe.inject.Injection;
 import com.austinv11.syringe.inject.InjectionDelta;
 import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.method.*;
-import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
 import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.IncompatibleConfigurationException;
 import com.austinv11.syringe.util.Lazy;
-import com.austinv11.syringe.visitor.InjectionVisitor;
+import com.austinv11.syringe.visitor.MethodInjectionVisitor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import javax.annotation.Nullable;
@@ -33,23 +31,13 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CompiledInjectionVisitor implements InjectionVisitor {
+public class CompiledInjectionVisitor implements MethodInjectionVisitor {
 
-    private final Collection<InjectionVisitor> originals;
+    private final Collection<MethodInjectionVisitor> originals;
     private volatile Optional<CompiledInjection> injection;
 
-    public CompiledInjectionVisitor(Collection<InjectionVisitor> originals) {
+    public CompiledInjectionVisitor(Collection<MethodInjectionVisitor> originals) {
         this.originals = originals;
-    }
-
-    @Override
-    public Optional<Injection<ClassSite>> visitClass(Lazy<ClassSite> site) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Injection<FieldSite>> visitField(Lazy<FieldSite> site) {
-        return Optional.empty();
     }
 
     @Override

@@ -32,13 +32,13 @@ public class FieldSite extends InjectionSite {
     public static Lazy<FieldSite> fromField(Field field) {
         return new Lazy<>(() -> {
             field.setAccessible(true);
-            Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(field);
+            Lazy<AnnotationInfo>[] annotations = AnnotationInfo.fromAnnotatedElement(field);
             Lazy<TypeInfo> typeInfo = TypeInfo.fromType(field.getGenericType());
             return new FieldSite(annotations, field.getName(), field.getModifiers(), typeInfo);
         });
     }
 
-    public FieldSite(Lazy<AnnotationInfo[]> annotationInfo, String name, int modifiers, Lazy<TypeInfo> typeInfo) {
+    public FieldSite(Lazy<AnnotationInfo>[] annotationInfo, String name, int modifiers, Lazy<TypeInfo> typeInfo) {
         super(InjectionTarget.FIELD, annotationInfo, name, modifiers);
         this.typeInfo = typeInfo;
     }

@@ -41,20 +41,20 @@ import java.lang.reflect.Parameter;
 
 public class ParameterInfo {
 
-    private final Lazy<AnnotationInfo[]> paramAnnotations;
+    private final Lazy<AnnotationInfo>[] paramAnnotations;
     private final Lazy<TypeInfo> parameterType;
     private final String parameterName;
     private final boolean isVarargs;
 
     public static Lazy<ParameterInfo> fromParameter(Parameter p) {
         return new Lazy<>(() -> {
-            Lazy<AnnotationInfo[]> annotations = AnnotationInfo.fromAnnotatedElement(p);
+            Lazy<AnnotationInfo>[] annotations = AnnotationInfo.fromAnnotatedElement(p);
             Lazy<TypeInfo> parameterType = TypeInfo.fromType(p.getParameterizedType());
             return new ParameterInfo(annotations, parameterType, p.getName(), p.isVarArgs());
         });
     }
 
-    public ParameterInfo(Lazy<AnnotationInfo[]> paramAnnotations, Lazy<TypeInfo> parameterType, String parameterName,
+    public ParameterInfo(Lazy<AnnotationInfo>[] paramAnnotations, Lazy<TypeInfo> parameterType, String parameterName,
                          boolean isVarargs) {
         this.paramAnnotations = paramAnnotations;
         this.parameterType = parameterType;
@@ -62,7 +62,7 @@ public class ParameterInfo {
         this.isVarargs = isVarargs;
     }
 
-    public Lazy<AnnotationInfo[]> getParameterAnnotations() {
+    public Lazy<AnnotationInfo>[] getParameterAnnotations() {
         return paramAnnotations;
     }
 

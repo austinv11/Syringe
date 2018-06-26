@@ -14,17 +14,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.austinv11.syringe.visitor;
 
 import com.austinv11.syringe.inject.Injection;
 import com.austinv11.syringe.inject.sites.ClassSite;
-import com.austinv11.syringe.inject.sites.FieldSite;
 import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.Lazy;
 
 import java.util.Optional;
 
-public interface InjectionVisitor {
+public interface MethodInjectionVisitor extends InjectionVisitor {
 
-    Injection<?>[] visit(Lazy<ClassSite> site);
+    Optional<? extends Injection<MethodSite>> visitMethod(Lazy<MethodSite> site);
+
+    @Override
+    default Injection<?>[] visit(Lazy<ClassSite> site) {
+        Lazy<MethodSite>[] fields = site.get().getMethods();
+        Injection<?>[] injections = new Injection[fields.length];
+        int effectiveI = 0;
+        for (Lazy<MethodSite> field : fields) {
+            Optional<? extends Injection> injection = visitMethod(field);
+            if (injection.isPresent()) {
+                injections[effectiveI++] = injection.get();
+            }
+        }
+        if (effectiveI < fields.length) {
+            Injection<?>[] realInjections = new Injection[effectiveI];
+            System.arraycopy(injections, 0, realInjections, 0, effectiveI);
+            return realInjections;
+        } else {
+            return injections;
+        }
+    }
 }

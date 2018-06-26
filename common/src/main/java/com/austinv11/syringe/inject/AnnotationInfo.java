@@ -27,15 +27,15 @@ import java.lang.reflect.Method;
 
 public class AnnotationInfo {
 
-    private final ClassSite type;
+    private final Lazy<ClassSite> type;
     private final Property[] properties;
 
-    public static Lazy<AnnotationInfo[]> fromAnnotatedElement(AnnotatedElement element) {
-        return new Lazy<>(() -> {
-            AnnotationInfo[] array = new AnnotationInfo[element.getAnnotations().length];
-            Annotation[] as = element.getAnnotations();
-            for (int i = 0; i < as.length; i++) {
-                Annotation a = as[i];
+    public static Lazy<AnnotationInfo>[] fromAnnotatedElement(AnnotatedElement element) {
+        Annotation[] as = element.getAnnotations();
+        Lazy<AnnotationInfo>[] array = new Lazy[as.length];
+        for (int i = 0; i < as.length; i++) {
+            Annotation a = as[i];
+            array[i] = new Lazy<>(() -> {
                 Property[] properties = new Property[a.annotationType().getDeclaredMethods().length];
                 Method[] declaredMethods = a.annotationType().getDeclaredMethods();
                 for (int j = 0; j < declaredMethods.length; j++) {
@@ -48,18 +48,19 @@ public class AnnotationInfo {
                         return null;
                     }
                 }
-                array[i] = new AnnotationInfo(ClassSite.fromClass(a.annotationType()).get(), properties);
-            }
-            return array;
-        });
+                return new AnnotationInfo(ClassSite.fromClass(a.annotationType()), properties);
+            });
+
+        }
+        return array;
     }
 
-    public AnnotationInfo(ClassSite type, Property[] properties) {
+    public AnnotationInfo(Lazy<ClassSite> type, Property[] properties) {
         this.type = type;
         this.properties = properties;
     }
 
-    public ClassSite getType() {
+    public Lazy<ClassSite> getType() {
         return type;
     }
 
@@ -68,6 +69,6 @@ public class AnnotationInfo {
     }
 
     public Class<? extends Annotation> materialize() {
-        return (Class<? extends Annotation>) type.materialize();
+        return (Class<? extends Annotation>) type.get().materialize();
     }
 }

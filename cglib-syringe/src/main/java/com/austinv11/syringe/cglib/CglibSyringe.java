@@ -20,6 +20,7 @@ import com.austinv11.syringe.Syringe;
 import com.austinv11.syringe.SyringeService;
 import com.austinv11.syringe.util.IncompatibleConfigurationException;
 import com.austinv11.syringe.visitor.InjectionVisitor;
+import com.austinv11.syringe.visitor.MethodInjectionVisitor;
 import com.google.auto.service.AutoService;
 import net.sf.cglib.proxy.Enhancer;
 
@@ -41,7 +42,7 @@ public class CglibSyringe implements SyringeService {
 
     public static final Syringe SYRINGE = new Syringe("CGLib-Syringe", "1.0", "CGLib proxies");
 
-    protected final Set<InjectionVisitor> visitors = new LinkedHashSet<>();
+    protected final Set<MethodInjectionVisitor> visitors = new LinkedHashSet<>();
 
     @Override
     public Syringe getSyringe() {
@@ -50,7 +51,10 @@ public class CglibSyringe implements SyringeService {
 
     @Override
     public void addVisitor(InjectionVisitor visitor) {
-        visitors.add(visitor);
+        if (!(visitor instanceof MethodInjectionVisitor))
+            throw new IllegalArgumentException("This syringe only supports method injections");
+
+        visitors.add((MethodInjectionVisitor) visitor);
     }
 
     @Override
