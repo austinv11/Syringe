@@ -1,8 +1,0 @@
-dependencies {
-    compile project(":common")
-
-    compileOnly "com.google.auto.service:auto-service:$autoservice_version"
-    compile 'cglib:cglib:3.2.6'
-
-    testCompile "junit:junit:$junit_version"
-}
