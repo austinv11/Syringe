@@ -80,14 +80,29 @@ public class ClassLoaderUtils {
 
         if (reloadClasses) {
             try {
-                for (Class<?> clazz : (Vector<Class<?>>) classes.get().get(null)) {
-                    newLoader.loadClass(clazz.getName());
+                for (Class<?> clazz : (Vector<Class<?>>) classes.get().get(old)) {
+                    try {
+                        newLoader.loadClass(clazz.getName());
+                    } catch (ClassNotFoundException e) {}
                 }
-            } catch (IllegalAccessException | ClassNotFoundException e) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
 
         return old;
+    }
+
+    /**
+     * Reflects to retrieve the current system class loader.
+     *
+     * @return The current system {@link java.lang.ClassLoader} instance.
+     */
+    public static final ClassLoader getSystemClassLoader() {
+        try {
+            return (ClassLoader) scl.get().get(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

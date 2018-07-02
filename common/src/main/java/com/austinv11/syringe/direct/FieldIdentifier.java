@@ -14,25 +14,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.austinv11.syringe.direct;
 
-import javax.annotation.Nullable;
+public class FieldIdentifier {
 
-public final class DirectFieldAccessor {
+    private final TypeSignature owner;
+    private final boolean isStatic;
+    private final TypeSignature type;
+    private final String name;
 
-    @Nullable
-    private Object f;
-
-    public DirectFieldAccessor(@Nullable Object f) {
-        this.f = f;
+    public FieldIdentifier(TypeSignature owner, boolean isStatic, TypeSignature type, String name) {
+        this.owner = owner;
+        this.isStatic = isStatic;
+        this.type = type;
+        this.name = name;
     }
 
-    @Nullable
-    public Object get() {
-        return f;
+    public TypeSignature getOwner() {
+        return owner;
     }
 
-    public void set(@Nullable Object o) {
-        f = o;
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public TypeSignature getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -14,25 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.direct;
+@NonNullPackage
+package com.austinv11.syringe.asm.loaders;
 
-import javax.annotation.Nullable;
-
-public final class DirectFieldAccessor {
-
-    @Nullable
-    private Object f;
-
-    public DirectFieldAccessor(@Nullable Object f) {
-        this.f = f;
-    }
-
-    @Nullable
-    public Object get() {
-        return f;
-    }
-
-    public void set(@Nullable Object o) {
-        f = o;
-    }
-}
+import com.austinv11.syringe.util.NonNullPackage;

@@ -19,6 +19,7 @@ package com.austinv11.syringe.cglib;
 import com.austinv11.syringe.Syringe;
 import com.austinv11.syringe.SyringeService;
 import com.austinv11.syringe.util.IncompatibleConfigurationException;
+import com.austinv11.syringe.util.services.InjectionServiceLoader;
 import com.austinv11.syringe.visitor.InjectionVisitor;
 import com.austinv11.syringe.visitor.MethodInjectionVisitor;
 import com.google.auto.service.AutoService;
@@ -43,6 +44,10 @@ public class CglibSyringe implements SyringeService {
     public static final Syringe SYRINGE = new Syringe("CGLib-Syringe", "1.0", "CGLib proxies");
 
     protected final Set<MethodInjectionVisitor> visitors = new LinkedHashSet<>();
+
+    public CglibSyringe() {
+        InjectionServiceLoader.visitors().stream().filter(v -> v instanceof MethodInjectionVisitor).forEach(this::addVisitor);
+    }
 
     @Override
     public Syringe getSyringe() {

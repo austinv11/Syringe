@@ -18,13 +18,37 @@ package com.austinv11.syringe.direct;
 
 public class MethodIdentifier {
 
+    private final TypeSignature owner;
+    private final boolean isStatic;
     private final TypeSignature returnType;
     private final String name;
     private final TypeSignature[] params;
 
-    public MethodIdentifier(TypeSignature returnType, String name, TypeSignature[] params) {
+    public MethodIdentifier(TypeSignature owner, boolean isStatic, TypeSignature returnType, String name, TypeSignature[] params) {
+        this.owner = owner;
+        this.isStatic = isStatic;
         this.returnType = returnType;
         this.name = name;
         this.params = params;
+    }
+
+    public TypeSignature getOwner() {
+        return owner;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public TypeSignature getReturnType() {
+        return returnType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TypeSignature[] getParams() {
+        return params;
     }
 }

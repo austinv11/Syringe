@@ -17,9 +17,18 @@
 package com.austinv11.syringe.direct;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
-public interface DirectMethodAccessor {
+public final class DirectMethodAccessor {
+
+    protected final Function<Object[], Object> target;
+
+    public DirectMethodAccessor(Function<Object[], Object> target) {
+        this.target = target;
+    }
 
     @Nullable
-    Object invoke(Object[] params) throws Throwable;
+    public Object invoke(Object[] params) throws Throwable {
+        return target.apply(params);
+    }
 }

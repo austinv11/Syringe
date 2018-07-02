@@ -14,25 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.direct;
 
-import javax.annotation.Nullable;
+package com.austinv11.syringe;
 
-public final class DirectFieldAccessor {
+import java.util.function.Function;
 
-    @Nullable
-    private Object f;
+public class Test2 implements Function<Object[], Object> {
 
-    public DirectFieldAccessor(@Nullable Object f) {
-        this.f = f;
-    }
+    private final Object instance;
 
-    @Nullable
-    public Object get() {
-        return f;
-    }
+    public Test2(Object instance) {this.instance = instance;}
 
-    public void set(@Nullable Object o) {
-        f = o;
+    @Override
+    public Object apply(Object[] objects) {
+        for (Object o : objects) {
+            System.out.println(o);
+        }
+        return null;
     }
 }

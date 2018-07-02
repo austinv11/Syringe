@@ -33,15 +33,12 @@
  */
 package com.austinv11.syringe.inject.clazz;
 
-import com.austinv11.syringe.direct.DirectFieldAccessor;
-import com.austinv11.syringe.direct.DirectMethodAccessor;
-import com.austinv11.syringe.direct.MethodIdentifier;
+import com.austinv11.syringe.direct.*;
 import com.austinv11.syringe.inject.Injection;
 import com.austinv11.syringe.inject.InjectionDelta;
 import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.sites.ClassSite;
 import com.austinv11.syringe.util.Lazy;
-import com.austinv11.syringe.direct.TypeSignature;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -70,9 +67,16 @@ public abstract class AddMethodInjection extends Injection<ClassSite> {
         TypeSignature[] annotatedTypes();
 
         //Hooks to allow for potential reflection optimizations
-        String[] preloadedFields();
+        FieldIdentifier[] preloadedFields();
 
         MethodIdentifier[] preloadedMethods();
+
+        default String descriptor() {
+            String params = "";
+            for (TypeSignature param : parameterTypes())
+                params += param.toString();
+            return String.format("(%s)%s", params, returnType().toString());
+        }
 
         @Nullable
         Object callback(@Nullable Object instance,

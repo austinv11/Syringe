@@ -22,6 +22,7 @@ import com.austinv11.syringe.inject.InjectionTarget;
 import com.austinv11.syringe.inject.method.*;
 import com.austinv11.syringe.inject.sites.MethodSite;
 import com.austinv11.syringe.util.IncompatibleConfigurationException;
+import com.austinv11.syringe.util.InjectionComparator;
 import com.austinv11.syringe.util.Lazy;
 import com.austinv11.syringe.visitor.MethodInjectionVisitor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -69,23 +70,7 @@ public class CompiledInjectionVisitor implements MethodInjectionVisitor {
             super(InjectionTarget.METHOD, injections.size() == 0 ? InjectionDelta.NONE : InjectionDelta.MODIFICATION);
             this.injections = new ArrayList<>(injections);
             //Move removals and pre-hooks to be first and post hooks to be last
-            this.injections.sort((o1, o2) -> {
-                InjectionDelta d1 = o1.getDelta();
-                InjectionDelta d2 = o2.getDelta();
-                if (o1 instanceof PreHookMethodInjection)
-                    return -1;
-                if (o2 instanceof PreHookMethodInjection)
-                    return 1;
-                if (d1 == InjectionDelta.REMOVAL)
-                    return -1;
-                if (d2 == InjectionDelta.REMOVAL)
-                    return 1;
-                if (o1 instanceof PostHookMethodInjection)
-                    return 1;
-                if (o2 instanceof PostHookMethodInjection)
-                    return -1;
-                return 0;
-            });
+            this.injections.sort(new InjectionComparator());
         }
 
         @Nullable

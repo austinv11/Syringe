@@ -14,25 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.direct;
 
-import javax.annotation.Nullable;
+package com.austinv11.syringe.asm;
 
-public final class DirectFieldAccessor {
+public interface ByteCodeLoader {
 
-    @Nullable
-    private Object f;
+    Class<?> load(byte[] bytecode);
 
-    public DirectFieldAccessor(@Nullable Object f) {
-        this.f = f;
-    }
+    Class<?> load(byte[] bytecode, Class<?> currClass);
 
-    @Nullable
-    public Object get() {
-        return f;
-    }
-
-    public void set(@Nullable Object o) {
-        f = o;
-    }
+    boolean inPlace();
 }

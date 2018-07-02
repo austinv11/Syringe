@@ -20,6 +20,7 @@ import com.austinv11.syringe.inject.*;
 import com.austinv11.syringe.util.Lazy;
 
 import java.lang.reflect.*;
+import java.util.Optional;
 
 public class ClassSite extends InjectionSite {
 
@@ -36,7 +37,7 @@ public class ClassSite extends InjectionSite {
 
     private final Lazy<TypeInfo> superClass;
 
-    private final Lazy<ClassSite> enclosingClass;
+    private final Lazy<Optional<ClassSite>> enclosingClass;
 
     private final Lazy<Class<?>> materialized;
 
@@ -73,9 +74,9 @@ public class ClassSite extends InjectionSite {
                 return TypeInfo.fromType(jSuper).get();
             });
 
-            Lazy<ClassSite> enclosing = new Lazy<>(() -> {
+            Lazy<Optional<ClassSite>> enclosing = new Lazy<>(() -> {
                 Class<?> jEnclosing = clazz.getEnclosingClass();
-                return ClassSite.fromClass(jEnclosing).get();
+                return Optional.ofNullable(ClassSite.fromClass(jEnclosing).get());
             });
 
             Kind k;
@@ -99,7 +100,7 @@ public class ClassSite extends InjectionSite {
 
     public ClassSite(Lazy<AnnotationInfo>[] annotationInfo, String name, int modifiers, Lazy<PackageInfo>
             packageInfo, Kind kind, Lazy<FieldSite>[] fields, Lazy<MethodSite>[] methods, Lazy<TypeInfo>[] types,
-                     Lazy<TypeInfo>[] interfaces, Lazy<TypeInfo> superClass, Lazy<ClassSite> enclosingClass, Lazy
+                     Lazy<TypeInfo>[] interfaces, Lazy<TypeInfo> superClass, Lazy<Optional<ClassSite>> enclosingClass, Lazy
                              <Class<?>> materialized) {
         super(InjectionTarget.CLASS, annotationInfo, name, modifiers);
         this.packageInfo = packageInfo;
@@ -141,7 +142,7 @@ public class ClassSite extends InjectionSite {
         return superClass;
     }
 
-    public Lazy<ClassSite> getEnclosingClass() {
+    public Lazy<Optional<ClassSite>> getEnclosingClass() {
         return enclosingClass;
     }
 

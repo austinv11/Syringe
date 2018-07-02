@@ -32,14 +32,17 @@ public class TypeSignature {
 
     private final String stringRep;
 
-    private static String format(String packageName, String className, boolean isArray) {
-        return String.format("%sL%s/%s;", isArray ? "[" : "",
-                String.join("/", packageName.split(".")),
-                className);
+    private static String format(String className, boolean isArray) {
+        return String.format("%sL%s;", isArray ? "[" : "",
+                className.replace('.', '/'));
     }
 
-    public TypeSignature(String packageName, String className, boolean isArray) {
-        this(format(packageName, className, isArray));
+    public TypeSignature(Class<?> clazz) {
+        this(clazz.getTypeName(), clazz.isArray());
+    }
+
+    public TypeSignature(String className, boolean isArray) {
+        this(format(className, isArray));
     }
 
     public TypeSignature(String stringRep) {
@@ -48,6 +51,10 @@ public class TypeSignature {
 
     public TypeSignature toArray() {
         return new TypeSignature("[" + stringRep);
+    }
+
+    public String toInternalString() {
+        return toString().replaceFirst("L", "").replace(";", "");
     }
 
     @Override
@@ -69,7 +76,6 @@ public class TypeSignature {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(stringRep);
     }
 }

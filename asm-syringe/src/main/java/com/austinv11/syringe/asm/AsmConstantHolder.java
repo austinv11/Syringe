@@ -14,25 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.austinv11.syringe.direct;
 
-import javax.annotation.Nullable;
+package com.austinv11.syringe.asm;
 
-public final class DirectFieldAccessor {
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-    @Nullable
-    private Object f;
+public class AsmConstantHolder {
 
-    public DirectFieldAccessor(@Nullable Object f) {
-        this.f = f;
+    private static final Map<String, Object> holder = new ConcurrentHashMap<>();
+
+    public static String add(Object o) {
+        String uuid;
+        do {
+            uuid = UUID.randomUUID().toString().replaceAll("-", "_");
+        } while (holder.containsKey(uuid));
+        holder.put(uuid, o);
+        return uuid;
     }
 
-    @Nullable
-    public Object get() {
-        return f;
-    }
-
-    public void set(@Nullable Object o) {
-        f = o;
+    public static Object get(String uuid) {
+        if (!holder.containsKey(uuid))
+            throw new RuntimeException("Report this to the dev!");
+        return holder.get(uuid);
     }
 }
