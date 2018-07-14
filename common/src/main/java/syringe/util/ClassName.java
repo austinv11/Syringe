@@ -65,7 +65,7 @@ public final class ClassName {
     }
 
     public ClassName(String name) {
-        if (name.startsWith("L"))
+        if (name.startsWith("L") && name.endsWith(";"))
             name = name.substring(1);
         if (name.endsWith(";"))
             name = name.substring(0, name.length() - 1);
@@ -98,7 +98,7 @@ public final class ClassName {
     }
 
     public String getTypeName() {
-        return className;
+        return isPrimitive ? primitives.get(className) : className;
     }
 
     public String getPackageName() {

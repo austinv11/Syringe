@@ -17,7 +17,11 @@
 
 package syringe.access;
 
+import syringe.util.Lazy;
+
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -25,15 +29,29 @@ import java.util.function.Function;
  */
 public class LazyMap<K, V> {
 
+    public static <K, V> LazyMap<K, V> convert(Map<K, Lazy<V>> map) {
+        return new LazyMap<>(new HashMap<>(), map.keySet(), k -> map.getOrDefault(k, new Lazy<>()).get());
+    }
+
     private final Map<K, V> map;
+    private final Set<K> keys;
     private final Function<K, V> generator;
 
-    public LazyMap(Map<K, V> map, Function<K, V> generator) {
+    public LazyMap(Map<K, V> map, Set<K> keys, Function<K, V> generator) {
         this.map = map;
+        this.keys = keys;
         this.generator = generator;
+    }
+
+    public LazyMap(Map<K, V> map) {
+        this(map, map.keySet(), map::get);
     }
 
     public V get(K key) {
         return map.computeIfAbsent(key, generator);
+    }
+
+    public Set<K> keys() {
+        return keys;
     }
 }

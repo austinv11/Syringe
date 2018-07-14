@@ -147,6 +147,6 @@ publishing {
 bintrayUpload.dependsOn build
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
-    distributionUrl = 'https://services.gradle.org/distributions/gradle-4.7-all.zip'
+    gradleVersion = '4.8.1'
+    distributionUrl = 'https://services.gradle.org/distributions/gradle-4.8.1-all.zip'
 }

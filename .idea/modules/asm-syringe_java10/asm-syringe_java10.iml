@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_10" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../asm-syringe/src/main/java9">
+      <sourceFolder url="file://$MODULE_DIR$/../../../asm-syringe/src/main/java9" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="common_main" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-util:6.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-analysis:6.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-tree:6.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm:6.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.8.12" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.errorprone:error_prone_annotations:2.0.18" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.j2objc:j2objc-annotations:1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.14" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.checkerframework:checker-qual:2.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.guava:guava:23.5-jre" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.auto:auto-common:0.8" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.google.auto.service:auto-service:1.0-rc4" level="project" />
+  </component>
+</module>

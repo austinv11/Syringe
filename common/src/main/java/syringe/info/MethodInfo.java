@@ -75,6 +75,16 @@ public class MethodInfo implements TransformableInfo<Method> {
         return accessor;
     }
 
+    public String getInternalTypeSignature() {
+        StringBuilder s = new StringBuilder("(");
+        for (ParameterInfo p : getParams()) {
+            s.append(p.getType().getAsInternalTypeName());
+        }
+        s.append(")");
+        s.append(getReturnType().getAsInternalTypeName());
+        return s.toString();
+    }
+
     @Override
     public Optional<Method> transform() {
         return transformed.get();

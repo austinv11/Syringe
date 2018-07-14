@@ -15,16 +15,12 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe;
+package syringe.callbacks.clazz;
 
-import syringe.visitor.ClassVisitor;
-import syringe.visitor.MethodVisitor;
+import syringe.info.ClassInfo;
 
-public interface Syringe {
+@FunctionalInterface
+public interface ClassDefinitionCallback {
 
-    void inject();
-
-    void addVisitor(ClassVisitor cv);
-
-    void addVisitor(MethodVisitor mv);
+    void construction(ClassInfo clazz);
 }

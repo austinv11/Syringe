@@ -15,14 +15,24 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+package syringe.asm;
 
-import syringe.info.ClassInfo;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import java.util.List;
+public final class GlobalRegistry {
 
-@FunctionalInterface
-public interface ClassInheritanceCallback {
+    private GlobalRegistry() {}
 
-    List<ClassInfo> inherits(ClassInfo base, List<ClassInfo> inherits);
+    private static final Map<String, Object> registry = new ConcurrentHashMap<>();
+
+    public static void register(String k, @Nullable Object o) {
+        registry.put(k, o);
+    }
+
+    @Nullable
+    public static Object get(String k) {
+        return registry.remove(k);
+    }
 }

@@ -25,5 +25,5 @@ import syringe.info.ClassInfo;
 @FunctionalInterface
 public interface ClassInitializerCallback {
 
-    void classInit(ClassInfo clazz, LazyMap<String, FieldAccessor> staticFields, LazyMap<String, MethodAccessor> staticMethods);
+    void classInit(ClassInfo clazz, boolean staticContext, LazyMap<String, FieldAccessor> fields, LazyMap<String, MethodAccessor> methods);
 }

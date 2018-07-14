@@ -17,9 +17,7 @@
 
 package syringe.info;
 
-import syringe.access.FieldAccessor;
 import syringe.access.LazyMap;
-import syringe.access.MethodAccessor;
 import syringe.util.ClassName;
 import syringe.util.Lazy;
 
@@ -31,22 +29,17 @@ public class ClassInfo implements TransformableInfo<Class> {
     //Note: Intentionally limited to prevent going down a rabbit hole of object constructions (FIXME later)
     private final ClassName name;
     private final int modifiers;
-    private final List<String> fields;
-    private final List<String> methods;
-    private final LazyMap<String, FieldAccessor> fieldAccessors;
-    private final LazyMap<String, MethodAccessor> methodAccessors;
+    private final LazyMap<String, FieldInfo> fieldAccessors;
+    private final LazyMap<String, MethodInfo> methodAccessors;
     private final List<Lazy<AnnotationInfo>> annotations;
     private final List<ClassName> extendsList;
     private final Lazy<Optional<Class>> transformed;
 
-    public ClassInfo(ClassName name, int modifiers, List<String> fields, List<String> methods, LazyMap<String, FieldAccessor>
-
-            fieldAccessors, LazyMap<String, MethodAccessor> methodAccessors, List<Lazy<AnnotationInfo>> annotations,
+    public ClassInfo(ClassName name, int modifiers, LazyMap<String, FieldInfo>
+            fieldAccessors, LazyMap<String, MethodInfo> methodAccessors, List<Lazy<AnnotationInfo>> annotations,
                      List<ClassName> extendsList, Lazy<Class> transformed) {
         this.name = name;
         this.modifiers = modifiers;
-        this.fields = fields;
-        this.methods = methods;
         this.fieldAccessors = fieldAccessors;
         this.methodAccessors = methodAccessors;
         this.annotations = annotations;
@@ -54,10 +47,9 @@ public class ClassInfo implements TransformableInfo<Class> {
         this.transformed = transformed.optional();
     }
 
-    public ClassInfo(ClassName name, int modifiers, List<String> fields, List<String> methods, LazyMap<String,
-            FieldAccessor> fieldAccessors, LazyMap<String, MethodAccessor> methodAccessors,
+    public ClassInfo(ClassName name, int modifiers, LazyMap<String, FieldInfo> fieldAccessors, LazyMap<String, MethodInfo> methodAccessors,
                      List<Lazy<AnnotationInfo>> annotations, List<ClassName> extendsList) {
-        this(name, modifiers, fields, methods, fieldAccessors, methodAccessors, annotations, extendsList, new Lazy<>());
+        this(name, modifiers, fieldAccessors, methodAccessors, annotations, extendsList, new Lazy<>());
     }
 
     public ClassName getName() {
@@ -68,19 +60,11 @@ public class ClassInfo implements TransformableInfo<Class> {
         return modifiers;
     }
 
-    public List<String> getFields() {
-        return fields;
-    }
-
-    public List<String> getMethods() {
-        return methods;
-    }
-
-    public LazyMap<String, FieldAccessor> getFieldAccessors() {
+    public LazyMap<String, FieldInfo> getFields() {
         return fieldAccessors;
     }
 
-    public LazyMap<String, MethodAccessor> getMethodAccessors() {
+    public LazyMap<String, MethodInfo> getMethods() {
         return methodAccessors;
     }
 

@@ -24,6 +24,6 @@ import java.util.List;
 
 @FunctionalInterface
 public interface ClassAnnotationCallback {
-
-    List<AnnotationInfo> annotations(ClassInfo clazz, List<AnnotationInfo> original);
+    //TODO: Maybe allow creation of annotations?
+    void annotations(ClassInfo clazz, List<AnnotationInfo> original);
 }

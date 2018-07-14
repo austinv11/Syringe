@@ -26,5 +26,5 @@ import java.util.List;
 @FunctionalInterface
 public interface MethodAnnotationCallback {
 
-    List<AnnotationInfo> annotations(ClassInfo clazz, MethodInfo method, List<AnnotationInfo> original);
+    void annotations(ClassInfo clazz, MethodInfo method, List<AnnotationInfo> original);
 }

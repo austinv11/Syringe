@@ -17,8 +17,8 @@
 
 package syringe.info;
 
+import syringe.access.FieldAccessor;
 import syringe.access.LazyMap;
-import syringe.access.MethodAccessor;
 import syringe.util.ClassName;
 import syringe.util.Lazy;
 
@@ -29,38 +29,32 @@ import java.util.Optional;
 public class AnnotationInfo implements TransformableInfo<Annotation> {
 
     private final ClassName name;
-    private final List<String> attributes;
-    private final LazyMap<String, MethodAccessor> accessors;
-    private final List<Lazy<AnnotationInfo>> annotations;
+    private final LazyMap<String, FieldAccessor> accessors;
+    private final List<AnnotationInfo> annotations;
     private final Lazy<Optional<Annotation>> transformed;
 
-    public AnnotationInfo(ClassName name, List<String> attributes, LazyMap<String, MethodAccessor> accessors, List
-            <Lazy<AnnotationInfo>> annotations, Lazy<Annotation> annotationSupplier) {
+    public AnnotationInfo(ClassName name, LazyMap<String, FieldAccessor> accessors, List
+            <AnnotationInfo> annotations, Lazy<Annotation> annotationSupplier) {
         this.name = name;
-        this.attributes = attributes;
         this.accessors = accessors;
         this.annotations = annotations;
         this.transformed = annotationSupplier.optional();
     }
 
-    public AnnotationInfo(ClassName name, List<String> attributes, LazyMap<String, MethodAccessor> accessors,
-                          List<Lazy<AnnotationInfo>> annotations) {
-        this(name, attributes, accessors, annotations, new Lazy<>());
+    public AnnotationInfo(ClassName name, LazyMap<String, FieldAccessor> accessors,
+                          List<AnnotationInfo> annotations) {
+        this(name, accessors, annotations, new Lazy<>());
     }
 
     public ClassName getName() {
         return name;
     }
 
-    public List<String> getAttributes() {
-        return attributes;
-    }
-
-    public LazyMap<String, MethodAccessor> getAccessors() {
+    public LazyMap<String, FieldAccessor> getAttributes() {
         return accessors;
     }
 
-    public List<Lazy<AnnotationInfo>> getAnnotations() {
+    public List<AnnotationInfo> getAnnotations() {
         return annotations;
     }
 

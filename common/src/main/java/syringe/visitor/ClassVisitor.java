@@ -27,7 +27,7 @@ public interface ClassVisitor {
         return Optional.empty();
     }
 
-    default Optional<ClassConstructionCallback> classConstruct() {
+    default Optional<ClassDefinitionCallback> classConstruct() {
         return Optional.empty();
     }
 
@@ -36,10 +36,6 @@ public interface ClassVisitor {
     }
 
     default Optional<FieldDefinitionCallback> defineFields() { //Handles addition + removal + signature
-        return Optional.empty();
-    }
-
-    default Optional<ClassInheritanceCallback> defineInheritence() {
         return Optional.empty();
     }
 

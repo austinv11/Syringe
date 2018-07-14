@@ -15,16 +15,11 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe;
+package syringe.asm.test;
 
-import syringe.visitor.ClassVisitor;
-import syringe.visitor.MethodVisitor;
+public class Test2 {
 
-public interface Syringe {
-
-    void inject();
-
-    void addVisitor(ClassVisitor cv);
-
-    void addVisitor(MethodVisitor mv);
+    public Test2() {
+        System.out.println("wow");
+    }
 }

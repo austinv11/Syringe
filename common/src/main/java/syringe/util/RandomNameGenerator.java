@@ -15,12 +15,20 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+package syringe.util;
 
-import syringe.info.ClassInfo;
+import java.util.UUID;
 
-@FunctionalInterface
-public interface ClassConstructionCallback {
+public final class RandomNameGenerator {
 
-    void construction(ClassInfo clazz);
+    private RandomNameGenerator() {}
+
+    public static String generate() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString().replaceAll("-", "_");
+    }
+
+    public static String generate(Class<?> type) {
+        return type.getSimpleName().replace("[]", "Array") + "_" + generate();
+    }
 }
