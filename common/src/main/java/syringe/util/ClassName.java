@@ -97,6 +97,10 @@ public final class ClassName {
         }
     }
 
+    public String getRawName() {
+        return className;
+    }
+
     public String getTypeName() {
         return isPrimitive ? primitives.get(className) : className;
     }

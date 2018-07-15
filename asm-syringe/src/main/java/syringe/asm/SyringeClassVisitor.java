@@ -19,7 +19,7 @@ package syringe.asm;
 
 import org.objectweb.asm.*;
 import syringe.access.FieldAccessor;
-import syringe.access.LazyMap;
+import syringe.util.LazyMap;
 import syringe.access.MethodAccessor;
 import syringe.callbacks.clazz.ClassAnnotationCallback;
 import syringe.callbacks.clazz.ClassDefinitionCallback;

@@ -15,15 +15,12 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+package syringe.javassist;
 
-import syringe.access.FieldAccessor;
-import syringe.util.LazyMap;
-import syringe.access.MethodAccessor;
-import syringe.info.ClassInfo;
+public final class Dummy {
+    private Dummy() {}
 
-@FunctionalInterface
-public interface ClassInitializerCallback {
-
-    void classInit(ClassInfo clazz, boolean staticContext, LazyMap<String, FieldAccessor> fields, LazyMap<String, MethodAccessor> methods);
+    public static final <T> T syringe_template(String key) {
+        throw new RuntimeException("This should never actually be called! (Did you not pass a string literal?)");
+    }
 }

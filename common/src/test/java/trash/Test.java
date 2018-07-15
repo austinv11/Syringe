@@ -17,8 +17,7 @@
 
 package trash;
 
-import syringe.access.FieldAccessor;
-import syringe.access.LazyMap;
+import syringe.util.LazyMap;
 import syringe.access.MethodAccessor;
 
 import javax.annotation.Nullable;

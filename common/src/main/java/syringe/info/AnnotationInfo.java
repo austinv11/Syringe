@@ -18,7 +18,7 @@
 package syringe.info;
 
 import syringe.access.FieldAccessor;
-import syringe.access.LazyMap;
+import syringe.util.LazyMap;
 import syringe.util.ClassName;
 import syringe.util.Lazy;
 
@@ -30,11 +30,11 @@ public class AnnotationInfo implements TransformableInfo<Annotation> {
 
     private final ClassName name;
     private final LazyMap<String, FieldAccessor> accessors;
-    private final List<AnnotationInfo> annotations;
+    private final List<Lazy<AnnotationInfo>> annotations;
     private final Lazy<Optional<Annotation>> transformed;
 
     public AnnotationInfo(ClassName name, LazyMap<String, FieldAccessor> accessors, List
-            <AnnotationInfo> annotations, Lazy<Annotation> annotationSupplier) {
+            <Lazy<AnnotationInfo>> annotations, Lazy<Annotation> annotationSupplier) {
         this.name = name;
         this.accessors = accessors;
         this.annotations = annotations;
@@ -42,7 +42,7 @@ public class AnnotationInfo implements TransformableInfo<Annotation> {
     }
 
     public AnnotationInfo(ClassName name, LazyMap<String, FieldAccessor> accessors,
-                          List<AnnotationInfo> annotations) {
+                          List<Lazy<AnnotationInfo>> annotations) {
         this(name, accessors, annotations, new Lazy<>());
     }
 
@@ -54,7 +54,7 @@ public class AnnotationInfo implements TransformableInfo<Annotation> {
         return accessors;
     }
 
-    public List<AnnotationInfo> getAnnotations() {
+    public List<Lazy<AnnotationInfo>> getAnnotations() {
         return annotations;
     }
 

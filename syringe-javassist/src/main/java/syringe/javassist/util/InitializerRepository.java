@@ -15,15 +15,24 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+package syringe.javassist.util;
 
-import syringe.access.FieldAccessor;
-import syringe.util.LazyMap;
-import syringe.access.MethodAccessor;
-import syringe.info.ClassInfo;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
-@FunctionalInterface
-public interface ClassInitializerCallback {
+public final class InitializerRepository {
 
-    void classInit(ClassInfo clazz, boolean staticContext, LazyMap<String, FieldAccessor> fields, LazyMap<String, MethodAccessor> methods);
+    private final static Map<String, Object> repo = new HashMap<>();
+
+    private InitializerRepository() {}
+
+    public static void put(String k, @Nullable Object o) {
+        repo.put(k, o);
+    }
+
+    @Nullable
+    public static Object getAndRemove(String k) {
+        return repo.remove(k);
+    }
 }

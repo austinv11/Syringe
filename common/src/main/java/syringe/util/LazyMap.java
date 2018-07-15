@@ -15,9 +15,7 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.access;
-
-import syringe.util.Lazy;
+package syringe.util;
 
 import java.util.HashMap;
 import java.util.Map;

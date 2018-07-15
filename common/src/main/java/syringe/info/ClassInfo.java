@@ -17,7 +17,7 @@
 
 package syringe.info;
 
-import syringe.access.LazyMap;
+import syringe.util.LazyMap;
 import syringe.util.ClassName;
 import syringe.util.Lazy;
 

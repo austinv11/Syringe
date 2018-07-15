@@ -15,15 +15,7 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+@NonNullPackage
+package syringe.javassist;
 
-import syringe.access.FieldAccessor;
-import syringe.util.LazyMap;
-import syringe.access.MethodAccessor;
-import syringe.info.ClassInfo;
-
-@FunctionalInterface
-public interface ClassInitializerCallback {
-
-    void classInit(ClassInfo clazz, boolean staticContext, LazyMap<String, FieldAccessor> fields, LazyMap<String, MethodAccessor> methods);
-}
+import syringe.util.NonNullPackage;

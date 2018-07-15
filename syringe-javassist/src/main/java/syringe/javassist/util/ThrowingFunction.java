@@ -15,15 +15,13 @@
  * along with Syringe.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package syringe.callbacks.clazz;
+package syringe.javassist.util;
 
-import syringe.access.FieldAccessor;
-import syringe.util.LazyMap;
-import syringe.access.MethodAccessor;
-import syringe.info.ClassInfo;
+import javax.annotation.Nullable;
 
 @FunctionalInterface
-public interface ClassInitializerCallback {
+public interface ThrowingFunction<I, R> {
 
-    void classInit(ClassInfo clazz, boolean staticContext, LazyMap<String, FieldAccessor> fields, LazyMap<String, MethodAccessor> methods);
+    @Nullable
+    R apply(@Nullable I in) throws Throwable;
 }
