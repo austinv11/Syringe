@@ -95,11 +95,7 @@ public class JavassistSyringe implements Syringe {
     }
 
     private Iterable<CtClass> scanClasses(ClassPool cp) {
-        try { //TODO
-            return Collections.singleton(cp.get("test"));
-        } catch (NotFoundException e) {
-            return null;
-        }
+        throw new RuntimeException("Runtime scanning not currently implemented!"); //TODO
     }
 
     private static String uniqueSignature(MethodInfo mi) {
@@ -423,6 +419,20 @@ public class JavassistSyringe implements Syringe {
             } catch (NotFoundException | IOException | CannotCompileException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @Override
+    public <T> Class<? extends T> inject(Class<? extends T> clazz) {
+        ClassPool cp = ClassPool.getDefault();
+        try {
+            CtClass cc = cp.get(clazz.getName());
+            hook(new CallbackCollector(classVisitors, methodVisitors), cp, cc);
+            cc.writeFile();
+            cc.detach();
+            return (Class<? extends T>) cc.toClass();
+        } catch (NotFoundException | CannotCompileException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

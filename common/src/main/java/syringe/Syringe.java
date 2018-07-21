@@ -24,6 +24,8 @@ public interface Syringe {
 
     void inject();
 
+    <T> Class<? extends T> inject(Class<? extends T> clazz);
+
     void addVisitor(ClassVisitor cv);
 
     void addVisitor(MethodVisitor mv);

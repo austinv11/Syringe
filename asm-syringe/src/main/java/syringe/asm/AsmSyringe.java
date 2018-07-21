@@ -61,6 +61,11 @@ public class AsmSyringe implements Syringe { //TODO
     }
 
     @Override
+    public <T> Class<? extends T> inject(Class<? extends T> clazz) {
+        return null; //TODO
+    }
+
+    @Override
     public void addVisitor(ClassVisitor cv) {
         classVisitors.add(cv);
     }
