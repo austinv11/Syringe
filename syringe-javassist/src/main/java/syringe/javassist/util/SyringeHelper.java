@@ -37,7 +37,7 @@ public final class SyringeHelper {
 
     private SyringeHelper() {}
 
-    private static Lazy<AnnotationInfo> annotationFromObject(Object o) {
+    public static Lazy<AnnotationInfo> annotationFromObject(Object o) {
         if (!(o instanceof Annotation))
             return new Lazy<>();
 
