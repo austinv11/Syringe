@@ -30,7 +30,6 @@ public class Tests {
 
     @Test
     public void testTemplating() {
-        TemplatingEngine e = new TemplatingEngine(ClassPool.getDefault());
         Map<String, String> replacements = new HashMap<>();
         String expected = "hello world!";
         String insert = "hello";
@@ -41,10 +40,10 @@ public class Tests {
         String test4 = "Dummy.syringe_template(\"test\"); world!";
         String test5 = "syringe_template(\"test\"); world!";
 
-        assertEquals(expected, e.template(test1, replacements));
-        assertEquals(expected, e.template(test2, replacements));
-        assertEquals(expected, e.template(test3, replacements));
-        assertEquals(expected, e.template(test4, replacements));
-        assertEquals(expected, e.template(test5, replacements));
+        assertEquals(expected, TemplatingEngine.template(test1, replacements));
+        assertEquals(expected, TemplatingEngine.template(test2, replacements));
+        assertEquals(expected, TemplatingEngine.template(test3, replacements));
+        assertEquals(expected, TemplatingEngine.template(test4, replacements));
+        assertEquals(expected, TemplatingEngine.template(test5, replacements));
     }
 }

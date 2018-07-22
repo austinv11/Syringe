@@ -62,7 +62,7 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
     private int modifiers;
     private final Map<String, Lazy<FieldInfo>> fields = new HashMap<>();
     private final Map<String, Lazy<MethodInfo>> methods = new HashMap<>();
-    private final List<AnnotationInfo> annotations = new ArrayList<>();
+    private final List<Lazy<AnnotationInfo>> annotations = new ArrayList<>();
     private final List<ClassName> extendsList = new ArrayList<>();
 
     private final Map<String, byte[]> needsLoading = new HashMap<>();
@@ -412,7 +412,7 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
     public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
         FieldVisitor fv = super.visitField(access, name, descriptor, signature, value);
         FieldVisitor observer = new FieldVisitor(ASM6, fv) {
-            final List<AnnotationInfo> annotations = new ArrayList<>();
+            final List<Lazy<AnnotationInfo>> annotations = new ArrayList<>();
             final Lazy<Field> transformer = new Lazy<>(() -> {
                 Class clazz = classTransformer.get();
                 if (clazz != null) {
@@ -472,7 +472,7 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
                 return null;
             });
 
-            final List<AnnotationInfo> annotations = new ArrayList<>();
+            final List<Lazy<AnnotationInfo>> annotations = new ArrayList<>();
             final List<ParameterInfo> params = new ArrayList<>(); //TODO
 
             @Override
@@ -598,7 +598,7 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
         };
 
         for (ClassAnnotationCallback cac : cc.getClassAnnotationCallbacks()) {
-            cac.annotations(selfInfo.get(), annotations);
+            cac.annotations(selfInfo.get(), annotations.stream().map(Lazy::get).collect(Collectors.toList()));
         }
 
         for (ClassDefinitionCallback cdc : cc.getClassDefinitionCallbacks()) {
@@ -614,11 +614,11 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
 
         final Lazy<? extends AnnotatedElement> holder;
         final ClassName name;
-        final List<AnnotationInfo> collector;
+        final List<Lazy<AnnotationInfo>> collector;
         final Map<String, Object> values = new HashMap<>();
-        final List<AnnotationInfo> nested = new ArrayList<>();
+        final List<Lazy<AnnotationInfo>> nested = new ArrayList<>();
 
-        public AnnotationInfoVisitor(AnnotationVisitor annotationVisitor, Lazy<? extends AnnotatedElement> holder, ClassName name, List<AnnotationInfo> collector) {
+        public AnnotationInfoVisitor(AnnotationVisitor annotationVisitor, Lazy<? extends AnnotatedElement> holder, ClassName name, List<Lazy<AnnotationInfo>> collector) {
             super(ASM6, annotationVisitor);
             this.holder = holder;
             this.name = name;
@@ -670,11 +670,14 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
         @Override
         public AnnotationVisitor visitAnnotation(String name, String descriptor) {
             AnnotationVisitor av = super.visitAnnotation(name, descriptor);
-            return new AnnotationInfoVisitor(av, new Lazy<>(() -> {
-                try {
-                    return Class.forName(this.name.getFullyQualifiedName());
-                } catch (ClassNotFoundException e) {
-                    return null;
+            return new AnnotationInfoVisitor(av, new Lazy<AnnotatedElement>(new Supplier<AnnotatedElement>() {
+                @Override
+                public AnnotatedElement get() {
+                    try {
+                        return Class.forName(AnnotationInfoVisitor.this.name.getFullyQualifiedName());
+                    } catch (ClassNotFoundException e) {
+                        return null;
+                    }
                 }
             }), new ClassName(descriptor), nested);
         }
@@ -685,17 +688,19 @@ public final class SyringeClassVisitor extends ClassVisitor implements Opcodes {
             LazyMap<String, FieldAccessor> accessors = new LazyMap<>(new HashMap<>(), values.keySet(), (k) -> {
                 return () -> values.get(k);
             });
-            collector.add(new AnnotationInfo(name, accessors, nested, new Lazy<>((Supplier<Annotation>) () -> {
-                AnnotatedElement ae = holder.get();
-                if (ae == null)
-                    return null;
-                for (Annotation a : ae.getAnnotations()) {
-                    if (new ClassName(a.getClass()).equals(name)) {
-                        return a;
+            collector.add(new Lazy<>(() -> {
+                return new AnnotationInfo(name, accessors, nested, new Lazy<>((Supplier<Annotation>) () -> {
+                    AnnotatedElement ae = holder.get();
+                    if (ae == null)
+                        return null;
+                    for (Annotation a : ae.getAnnotations()) {
+                        if (new ClassName(a.getClass()).equals(name)) {
+                            return a;
+                        }
                     }
-                }
-                return null;
-            })));
+                    return null;
+                }));
+            }));
         }
     }
 }
