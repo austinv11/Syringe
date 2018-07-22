@@ -12,7 +12,7 @@ ext {
     artifact_group = 'syringe'
     project_version = '1.0.0-SNAPSHOT'
     project_description = 'Abstractions for programmatically modifying Java classes.'
-    project_jdk = '1.8'
+    project_jdk = '9'
 
     // Dependencies
     jsr305_version = '3.0.2'
